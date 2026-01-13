@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Royal Quest of Prague</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Crimson Pro', serif;
+            background-color: #fdf6e3;
+            color: #5d4037;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .parchment {
+            background-color: #f4e4bc;
+            background-image: url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+            border: 2px solid #d4a373;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .step-locked { border-left: 4px solid #cbd5e1; background: white; opacity: 0.8; }
+        .step-unlocked { border-left: 4px solid #eab308; background: #fef3c7; opacity: 1; }
+        .hidden { display: none; }
+        .map-text { font-size: 8px; font-weight: bold; fill: #5d4037; text-transform: uppercase; letter-spacing: 0.5px; font-family: sans-serif; }
+        
+        .marker-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { r: 3; opacity: 1; }
+            100% { r: 10; opacity: 0; }
+        }
+
+        .error-msg { color: #b91c1c; font-size: 0.875rem; margin-top: 0.5rem; font-style: italic; display: none; }
+
+        /* Ornate Gothic Diploma Styles */
+        .gothic-font {
+            font-family: 'UnifrakturMaguntia', cursive;
+        }
+
+        #certificate {
+            background: #fdf6e3;
+            background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+            border: 25px solid transparent;
+            /* Using a decorative border image for that 14th century frame feel */
+            border-image: url("https://www.transparenttextures.com/patterns/textured-paper.png") 30 round;
+            outline: 8px double #8d6e63;
+            outline-offset: -20px;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        /* Illuminated Letter Style */
+        .illuminated {
+            float: left;
+            font-size: 4rem;
+            line-height: 3.5rem;
+            padding-top: 4px;
+            padding-right: 8px;
+            padding-left: 3px;
+            color: #991b1b;
+            font-family: 'UnifrakturMaguntia', cursive;
+            text-shadow: 2px 2px #d4a373;
+        }
+
+        .royal-seal {
+            width: 100px;
+            height: 100px;
+            background: #991b1b;
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fef3c7;
+            border: 3px solid #7f1d1d;
+            transform: rotate(-5deg);
+        }
+
+        .royal-seal::after {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 40px;
+            background: rgba(153, 27, 27, 0.4);
+            top: 80px;
+            left: -10px;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 80% 80%, 50% 100%, 20% 80%, 0% 100%);
+            z-index: -1;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #certificate-wrap, #certificate-wrap * { visibility: visible; }
+            #certificate-wrap { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-2xl mx-auto space-y-8">
+        <header class="text-center border-b-2 border-[#d4a373] pb-6">
+            <h1 class="text-4xl md:text-5xl font-bold mb-2 tracking-tight">👑 The Royal Quest of Prague</h1>
+            <p class="text-xl italic text-[#8d6e63]">Authorized by His Majesty, King Charles IV</p>
+        </header>
+
+        <!-- Visual Map -->
+        <div class="parchment p-5 rounded-lg relative overflow-hidden border-double border-4 border-[#8d6e63]">
+            <h3 class="text-center font-bold uppercase tracking-widest mb-4">Mappa Civitatis Antiquae</h3>
+            <div class="relative bg-[#efe1ba] rounded border border-[#d4a373] p-1 shadow-inner">
+                <svg viewBox="0 0 400 280" class="w-full h-auto">
+                    <!-- River Vltava -->
+                    <path d="M 0 210 Q 50 190 100 210 T 200 200 T 300 220 T 400 200" fill="none" stroke="#a5b4fc" stroke-width="30" opacity="0.4"/>
+                    <path d="M 0 210 Q 50 190 100 210 T 200 200 T 300 220 T 400 200" fill="none" stroke="#818cf8" stroke-width="2" opacity="0.3"/>
+                    
+                    <!-- Landmark I: House of Bell -->
+                    <g transform="translate(320, 80)">
+                        <path d="M -15 -10 L 15 -10 L 15 15 L -15 15 Z" fill="#d1c4a3" stroke="#5d4037" stroke-width="1.5"/>
+                        <path d="M -15 -10 L 0 -25 L 15 -10" fill="#991b1b" stroke="#5d4037" stroke-width="1.5"/>
+                        <circle cx="0" cy="0" r="4" fill="#eab308" class="marker-pulse"/>
+                        <circle cx="0" cy="0" r="3" fill="#5d4037"/>
+                        <text x="18" y="5" class="map-text">I. Domus Bell</text>
+                    </g>
+
+                    <!-- Landmark II: Clock -->
+                    <g transform="translate(220, 120)">
+                        <rect x="-10" y="-20" width="20" height="40" fill="#a89d8a" stroke="#5d4037" stroke-width="1.5"/>
+                        <circle cx="0" cy="-5" r="6" fill="#fef3c7" stroke="#5d4037" stroke-width="1"/>
+                        <circle cx="0" cy="-5" r="4" fill="#eab308" class="marker-pulse"/>
+                        <text x="-65" y="0" class="map-text">II. Horologium</text>
+                    </g>
+
+                    <!-- Landmark III: Bridge Tower -->
+                    <g transform="translate(110, 185)">
+                        <path d="M -12 -20 L 12 -20 L 15 20 L -15 20 Z" fill="#8d8d8d" stroke="#5d4037" stroke-width="1.5"/>
+                        <rect x="-12" y="-5" width="24" height="4" fill="#5d4037"/>
+                        <circle cx="0" cy="5" r="4" fill="#eab308" class="marker-pulse"/>
+                        <text x="-5" y="35" class="map-text">III. Turris Pontis</text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Stop 1 -->
+        <div id="stop1-card" class="step-locked p-6 rounded-r-lg shadow-md transition-all">
+            <div class="flex justify-between items-start mb-2">
+                <h2 class="text-2xl font-bold">I. The House of the Stone Bell</h2>
+                <a href="https://www.google.com/maps/search/?api=1&query=50.087766,14.42187" target="_blank" class="bg-white border border-stone-300 rounded px-2 py-1 flex items-center gap-1 shadow-sm hover:bg-stone-50">
+                    <span class="text-[10px] font-black uppercase">📍 Open Map</span>
+                </a>
+            </div>
+            <p class="mb-4 text-[#8d6e63]">"Look high on the corner for the silent bell. What material is it crafted from?"</p>
+            <div id="stop1-controls">
+                <div class="flex gap-2">
+                    <input type="text" id="stop1-input" class="flex-1 border-2 border-[#d4a373] p-2 rounded bg-stone-50" placeholder="Material..." onkeypress="if(event.key==='Enter') checkStop1()">
+                    <button onclick="checkStop1()" class="bg-[#5d4037] text-white px-4 py-2 rounded font-bold">Verify</button>
+                </div>
+                <p id="stop1-error" class="error-msg">That is not correct. Look closer at the bell on the corner!</p>
+            </div>
+            <p id="stop1-success" class="hidden text-green-700 italic text-sm mt-2 font-bold font-serif">"Correct. I was born in this very house in 1316." — King Charles IV</p>
+        </div>
+
+        <!-- Stop 2 -->
+        <div id="stop2-card" class="step-locked p-6 rounded-r-lg shadow-md transition-all">
+            <div class="flex justify-between items-start mb-2">
+                <h2 class="text-2xl font-bold">II. The Astronomical Clock</h2>
+                <a href="https://www.google.com/maps/search/?api=1&query=50.0870,14.4207" target="_blank" class="bg-white border border-stone-300 rounded px-2 py-1 flex items-center gap-1 shadow-sm hover:bg-stone-50">
+                    <span class="text-[10px] font-black uppercase">📍 Open Map</span>
+                </a>
+            </div>
+            <p class="mb-4 text-[#8d6e63]">"Find the figure of Vanity. What does he hold to admire himself?"</p>
+            <div id="stop2-controls">
+                <div class="flex gap-2">
+                    <input type="text" id="stop2-input" class="flex-1 border-2 border-[#d4a373] p-2 rounded bg-stone-50" placeholder="He holds a..." onkeypress="if(event.key==='Enter') checkStop2()">
+                    <button onclick="checkStop2()" class="bg-[#5d4037] text-white px-4 py-2 rounded font-bold">Verify</button>
+                </div>
+                <p id="stop2-error" class="error-msg">Not quite. Look at the statue on the far left of the clock face.</p>
+            </div>
+            <p id="stop2-success" class="hidden text-green-700 italic text-sm mt-2 font-bold font-serif">"Correct! Vanity is one of the four threats to the city."</p>
+        </div>
+
+        <!-- Stop 3 -->
+        <div id="stop3-card" class="step-locked p-6 rounded-r-lg shadow-md transition-all">
+            <div class="flex justify-between items-start mb-2">
+                <h2 class="text-2xl font-bold">III. The Old Town Bridge Tower</h2>
+                <a href="https://www.google.com/maps/search/?api=1&query=50.0861,14.4138" target="_blank" class="bg-white border border-stone-300 rounded px-2 py-1 flex items-center gap-1 shadow-sm hover:bg-stone-50">
+                    <span class="text-[10px] font-black uppercase">📍 Open Map</span>
+                </a>
+            </div>
+            <p class="mb-4 text-[#8d6e63]">"Search the facade for the Kingfisher bird. What circle of luck sits above his head?"</p>
+            <div id="stop3-controls">
+                <div class="flex gap-2">
+                    <input type="text" id="stop3-input" class="flex-1 border-2 border-[#d4a373] p-2 rounded bg-stone-50" placeholder="It is a..." onkeypress="if(event.key==='Enter') checkStop3()">
+                    <button onclick="checkStop3()" class="bg-[#5d4037] text-white px-4 py-2 rounded font-bold">Verify</button>
+                </div>
+                <p id="stop3-error" class="error-msg">Look up higher! The kingfisher is caught in something round.</p>
+            </div>
+            <p id="stop3-success" class="hidden text-green-700 italic text-sm mt-2 font-bold font-serif">"Correct! The wreath is a symbol of my favorite bird."</p>
+        </div>
+
+        <!-- Finale -->
+        <div id="finale" class="hidden bg-[#5d4037] text-[#f4e4bc] p-8 rounded-lg shadow-2xl border-4 border-[#d4a373] text-center space-y-6">
+            <h2 class="text-3xl font-bold uppercase tracking-widest">The Royal Palindrome</h2>
+            <p class="italic opacity-90">"The foundation date of my bridge is a magic sequence. 1-3-5-7... complete it to seal your victory."</p>
+            <div id="pal-input-wrap">
+                <input type="text" id="pal-input" class="bg-[#4a332c] border-2 border-[#d4a373] text-3xl text-center w-full py-4 tracking-widest rounded-lg" placeholder="1357..." onkeypress="if(event.key==='Enter') checkPalindrome()">
+                <button onclick="checkPalindrome()" class="mt-4 w-full bg-[#d4a373] text-[#5d4037] py-2 rounded font-bold uppercase">Verify Sequence</button>
+                <p id="pal-error" class="error-msg text-yellow-200">The sequence must be numerical and symmetrical. Try again!</p>
+            </div>
+            
+            <div id="victory-form" class="hidden space-y-4">
+                <p class="text-xl">The bridge stands eternal! Claim your diploma.</p>
+                <input type="text" id="student-name" class="w-full p-3 rounded text-black text-center" placeholder="Enter your full name">
+                <button onclick="showCertificate()" class="w-full bg-yellow-600 p-4 rounded font-bold uppercase">Generate Diploma</button>
+            </div>
+        </div>
+
+        <!-- Ornate Diploma -->
+        <div id="certificate-wrap" class="hidden py-10">
+            <div id="certificate" class="relative">
+                <div class="text-stone-400 text-xs font-bold uppercase tracking-[0.4em] mb-4">Regnum Bohemiae</div>
+                <h4 class="text-lg font-bold text-[#8d6e63] italic mb-1 gothic-font">By the Grace of God, King of the Romans and King of Bohemia</h4>
+                <h2 class="text-5xl md:text-6xl font-bold mb-8 text-[#5d4037] border-b-4 border-double border-[#d4a373] pb-4 gothic-font">Diploma of Royal Merit</h2>
+                
+                <div class="max-w-lg mx-auto text-left relative min-h-[150px]">
+                    <span class="illuminated">B</span>
+                    <p class="text-xl leading-relaxed pt-2">
+                        e it known unto all subjects of the Realm that our faithful scholar and seeker of truth, 
+                    </p>
+                    <h3 id="cert-name" class="block w-full text-center text-4xl md:text-5xl font-bold text-[#991b1b] my-8 gothic-font">Student Name</h3>
+                    <p class="text-xl leading-relaxed text-center">
+                        hath navigated the ancient stones of the Old Town, unraveled the riddles of the masters, and sealed the magic of the Royal Bridge with wisdom and valor.
+                    </p>
+                </div>
+                
+                <div class="flex justify-between items-center mt-16 px-10 relative">
+                    <div class="text-left">
+                        <div class="w-40 border-b-2 border-stone-600 mb-1"></div>
+                        <p class="text-xs uppercase font-bold text-stone-600 gothic-font">High Chancellor of Prague</p>
+                    </div>
+                    
+                    <div class="royal-seal">
+                        <span class="text-3xl font-bold gothic-font">K</span>
+                    </div>
+
+                    <div class="text-right text-stone-500 text-xs font-bold">
+                        <p class="gothic-font">Anno Domini</p>
+                        <p id="current-date" class="text-lg">1357</p>
+                        <p class="text-[10px] mt-1 opacity-60 tracking-widest">SEQ: 135797531</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="window.print()" class="no-print mt-8 w-full bg-[#5d4037] text-white p-5 rounded-lg font-bold uppercase shadow-xl hover:bg-[#3e2b25] transition-colors">📜 Seal and Bestow This Honor</button>
+        </div>
+
+        <footer class="text-center text-[#8d6e63] text-sm py-10 opacity-50">
+            <p>© 1357 - 2026 Kingdom of Bohemia</p>
+            <button onclick="localStorage.clear(); location.reload();" class="text-[10px] underline mt-4">Reset Progress</button>
+        </footer>
+    </div>
+
+    <script>
+        // Check if this is the first time the app is run in this session
+        // If so, we clear the previous quest state to ensure a fresh start
+        if (!sessionStorage.getItem('session_active')) {
+            localStorage.removeItem('pragueQuestState');
+            sessionStorage.setItem('session_active', 'true');
+        }
+
+        const state = JSON.parse(localStorage.getItem('pragueQuestState')) || { s1: false, s2: false, s3: false };
+
+        function saveState() {
+            localStorage.setItem('pragueQuestState', JSON.stringify(state));
+        }
+
+        function loadProgress() {
+            if (state.s1) markUnlocked(1);
+            if (state.s2) markUnlocked(2);
+            if (state.s3) markUnlocked(3);
+            checkAll();
+            // Use current year but formatted for context
+            const now = new Date();
+            document.getElementById('current-date').innerText = now.getFullYear();
+        }
+
+        function markUnlocked(num) {
+            const card = document.getElementById(`stop${num}-card`);
+            const controls = document.getElementById(`stop${num}-controls`);
+            const success = document.getElementById(`stop${num}-success`);
+            if (card) card.className = 'step-unlocked p-6 rounded-r-lg shadow-md';
+            if (controls) controls.classList.add('hidden');
+            if (success) success.classList.remove('hidden');
+        }
+
+        function checkStop1() {
+            const val = document.getElementById('stop1-input').value.toLowerCase();
+            if (val.includes('stone') || val.includes('rock') || val.includes('sandstone')) {
+                state.s1 = true; saveState(); markUnlocked(1); checkAll();
+            } else {
+                document.getElementById('stop1-error').style.display = 'block';
+            }
+        }
+
+        function checkStop2() {
+            const val = document.getElementById('stop2-input').value.toLowerCase();
+            if (val.includes('mirror') || val.includes('glass')) {
+                state.s2 = true; saveState(); markUnlocked(2); checkAll();
+            } else {
+                document.getElementById('stop2-error').style.display = 'block';
+            }
+        }
+
+        function checkStop3() {
+            const val = document.getElementById('stop3-input').value.toLowerCase();
+            if (val.includes('wreath') || val.includes('circle') || val.includes('wreat')) {
+                state.s3 = true; saveState(); markUnlocked(3); checkAll();
+            } else {
+                document.getElementById('stop3-error').style.display = 'block';
+            }
+        }
+
+        function checkAll() {
+            if (state.s1 && state.s2 && state.s3) {
+                document.getElementById('finale').classList.remove('hidden');
+            }
+        }
+
+        function checkPalindrome() {
+            const val = document.getElementById('pal-input').value.replace(/\s/g, '');
+            if (val === '135797531') {
+                document.getElementById('victory-form').classList.remove('hidden');
+                document.getElementById('pal-input-wrap').classList.add('hidden');
+            } else {
+                document.getElementById('pal-error').style.display = 'block';
+            }
+        }
+
+        function showCertificate() {
+            const name = document.getElementById('student-name').value;
+            if (!name) return alert("Please enter your name!");
+            document.getElementById('cert-name').innerText = name;
+            document.getElementById('finale').classList.add('hidden');
+            document.getElementById('certificate-wrap').classList.remove('hidden');
+            document.getElementById('certificate-wrap').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.onload = loadProgress;
+    </script>
+</body>
+</html>
