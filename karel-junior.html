@@ -1,96 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Royal Quest of King Charles IV</title>
+    <title>King Charles IV Quest</title>
     <style>
-        body { font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif; background-color: #f4e4bc; color: #333; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        #chat-container { width: 100%; max-width: 500px; background: white; border: 4px solid #8b4513; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        #header { background: #8b4513; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.3rem; border-bottom: 4px solid #d4af37; }
-        #chat-box { height: 450px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; background-image: url('https://www.transparenttextures.com/patterns/paper.png'); }
-        .msg { padding: 12px 18px; border-radius: 18px; max-width: 80%; line-height: 1.5; font-size: 1.1rem; }
-        .karel-msg { background: #fef9e7; align-self: flex-start; border-bottom-left-radius: 2px; border-left: 6px solid #d4af37; color: #5d4037; }
-        .user-msg { background: #5c92ff; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        #input-area { display: flex; padding: 15px; border-top: 2px solid #ddd; background: #fff; }
-        input { flex-grow: 1; padding: 12px; border: 2px solid #ccc; border-radius: 10px; outline: none; font-size: 1rem; }
-        button { background: #8b4513; color: white; border: none; padding: 10px 20px; margin-left: 8px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .diploma { background: #fff; border: 10px double #d4af37; padding: 20px; text-align: center; margin-top: 10px; }
+        body { font-family: sans-serif; background-color: #f4e4bc; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        #chat-container { width: 100%; max-width: 500px; background: white; border: 4px solid #8b4513; border-radius: 15px; }
+        #header { background: #8b4513; color: white; padding: 15px; text-align: center; font-weight: bold; }
+        #chat-box { height: 400px; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px; border-radius: 10px; max-width: 80%; }
+        .karel { background: #fdf2d0; align-self: flex-start; border-left: 5px solid #d4af37; }
+        .user { background: #007bff; color: white; align-self: flex-end; }
+        #input-area { display: flex; padding: 10px; border-top: 1px solid #ddd; }
+        input { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: #8b4513; color: white; border: none; padding: 10px; margin-left: 5px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
-
-    <h1>👑 Junior Karel's Royal Quest</h1>
-    
+    <h1>👑 The Royal Quest</h1>
     <div id="chat-container">
-        <div id="header">The King's Messenger</div>
+        <div id="header">Chat with King Charles IV</div>
         <div id="chat-box" id="chatbox">
-            <div class="msg karel-msg">Greetings, young scholar! I am King Charles IV. I see you have a magic glowing tablet, but where is your tunic?! No matter... <br><br>Are you ready for your first riddle? Tell me: I have a bell in the Old Town Square, but it does not ring. What is it made of?</div>
+            <div class="msg karel">Greetings, young scholar! Why are you not wearing a tunic? No matter... tell me, is my secret bell made of metal, or stone?</div>
         </div>
         <div id="input-area">
-            <input type="text" id="user-input" placeholder="Type your answer..." onkeypress="handleKeyPress(event)">
+            <input type="text" id="user-input" placeholder="Type here..." onkeypress="if(event.key==='Enter')sendMessage()">
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
-
     <script>
-        let currentStop = 1;
-
+        let stop = 1;
         function sendMessage() {
             const input = document.getElementById('user-input');
-            const chatBox = document.getElementById('chat-box');
-            const val = input.value.toLowerCase().trim();
-            if (val === "") return;
+            const box = document.getElementById('chat-box');
+            if (input.value.trim() === "") return;
 
-            // Show student message
-            const userDiv = document.createElement('div');
-            userDiv.className = 'msg user-msg';
-            userDiv.textContent = input.value;
-            chatBox.appendChild(userDiv);
-            
+            const uDiv = document.createElement('div');
+            uDiv.className = 'msg user';
+            uDiv.textContent = input.value;
+            box.appendChild(uDiv);
+
+            const val = input.value.toLowerCase();
             input.value = "";
 
-            // Royal Logic
             setTimeout(() => {
-                const karelDiv = document.createElement('div');
-                karelDiv.className = 'msg karel-msg';
-                let response = "";
+                const kDiv = document.createElement('div');
+                kDiv.className = 'msg karel';
+                let txt = "";
 
-                if (currentStop === 1) {
-                    if (val.includes("stone") || val.includes("rock") || val.includes("sandstone") || val.includes("kamen")) {
-                        response = "Huzzah! Correct! It is made of stone. I was born in that very house! Now, go to the Great Clock (The Orloj). Look at the man named 'Vanity' on the top left. What is he holding in his hand?";
-                        currentStop = 2;
-                    } else {
-                        response = "Hmm, not quite. Feel the wall of the house! Is it cold metal, or rough stone? Off you go, little knight!";
-                    }
-                } 
-                else if (currentStop === 2) {
+                if (stop === 1) {
+                    if (val.includes("stone") || val.includes("rock") || val.includes("kamen")) {
+                        txt = "Huzzah! It is stone! Now, find the man named 'Vanity' at the Clock. What is he holding?";
+                        stop = 2;
+                    } else { txt = "Look closer! Is it cold metal or rough stone? Off you go!"; }
+                } else if (stop === 2) {
                     if (val.includes("mirror") || val.includes("zrcadlo")) {
-                        response = "A mirror! He is very proud of his face, isn't he? Now, go to my Bridge Tower. Look for a tiny bird called a Kingfisher. What is the bird sitting inside?";
-                        currentStop = 3;
-                    } else {
-                        response = "Look closely at his hand! He is looking at himself. What do you use to see your own face?";
-                    }
-                }
-                else if (currentStop === 3) {
+                        txt = "A mirror! He is very proud. Now, find the Kingfisher bird at the Bridge Tower. What is the bird sitting inside?";
+                        stop = 3;
+                    } else { txt = "He is looking at his own face... what is he holding?"; }
+                } else if (stop === 3) {
                     if (val.includes("wreath") || val.includes("circle") || val.includes("veil") || val.includes("venec")) {
-                        response = "A golden wreath! You have found it! You are a master scholar. Here is my secret Magic Number: **1357 9 7 5 3 1**. It is a bridge of numbers that never breaks! <br><br> 🏆 **YOU HAVE FINISHED THE QUEST!** I hereby grant you the Royal Diploma of Wisdom!";
-                        currentStop = 4;
-                    } else {
-                        response = "Look for the bird inside a circle of leaves or a stone veil! What is surrounding the bird?";
-                    }
-                }
-                else {
-                    response = "You have the Magic Number and my Diploma! You are a true friend of Prague. Go forth and enjoy my city!";
-                }
+                        txt = "Correct! A wreath! You are a master scholar. My magic number is 1357 9 7 5 3 1. You have earned your Royal Diploma!";
+                        stop = 4;
+                    } else { txt = "Look for the bird inside a stone circle or wreath!"; }
+                } else { txt = "You have the victory! Well done, little knight!"; }
 
-                karelDiv.innerHTML = response;
-                chatBox.appendChild(karelDiv);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 800);
+                kDiv.innerHTML = txt;
+                box.appendChild(kDiv);
+                box.scrollTop = box.scrollHeight;
+            }, 600);
         }
-
-        function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
     </script>
 </body>
 </html>
