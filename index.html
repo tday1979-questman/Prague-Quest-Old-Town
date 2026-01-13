@@ -6,43 +6,46 @@
     <title>The King's Royal Quest</title>
     <style>
         :root { --royal-gold: #d4af37; --royal-brown: #8b4513; --parchment: #f4e4bc; }
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Georgia', serif; background: var(--parchment); overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Georgia', serif; background: var(--parchment); }
         
-        /* The Map */
-        #map-frame { width: 100%; height: 100vh; border: none; }
+        /* The Map Box - Guaranteed to show now */
+        #map-container { width: 100%; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
+        iframe { width: 100%; height: 100%; border: none; }
 
         /* The King's Button */
         #king-btn { 
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: var(--royal-brown); color: white; border: 3px solid var(--royal-gold);
             padding: 15px 30px; border-radius: 50px; font-size: 1.2rem; font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer; z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6); cursor: pointer; z-index: 1000;
         }
 
         /* The Chat Overlay */
-        #chat-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
-        #chat-window { width: 95%; max-width: 450px; height: 80vh; background: white; border: 5px solid var(--royal-gold); border-radius: 20px; display: flex; flex-direction: column; }
-        #chat-header { background: var(--royal-brown); color: white; padding: 15px; text-align: center; position: relative; }
-        #chat-history { flex-grow: 1; overflow-y: auto; padding: 20px; background: #fffdf9; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 12px; border-radius: 15px; line-height: 1.4; max-width: 85%; }
-        .k-msg { background: #f1f1f1; align-self: flex-start; border-left: 5px solid var(--royal-gold); }
+        #chat-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; }
+        #chat-window { width: 95%; max-width: 450px; height: 80vh; background: white; border: 5px solid var(--royal-gold); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; }
+        #chat-header { background: var(--royal-brown); color: white; padding: 15px; text-align: center; font-weight: bold; }
+        #chat-history { flex-grow: 1; overflow-y: auto; padding: 20px; background: #fffdf9; display: flex; flex-direction: column; gap: 12px; }
+        .msg { padding: 12px; border-radius: 15px; line-height: 1.5; max-width: 85%; font-size: 1.05rem; }
+        .k-msg { background: #f1f1f1; align-self: flex-start; border-left: 5px solid var(--royal-gold); color: #221; }
         .u-msg { background: #007bff; color: white; align-self: flex-end; }
-        #input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
-        input { flex-grow: 1; padding: 10px; border-radius: 10px; border: 1px solid #ccc; }
-        button#send { background: var(--royal-brown); color: white; border: none; padding: 10px; border-radius: 10px; }
+        #input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; background: white; }
+        input { flex-grow: 1; padding: 12px; border-radius: 10px; border: 1px solid #ccc; font-size: 1rem; }
+        button#send { background: var(--royal-brown); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <iframe id="map-frame" src="http://googleusercontent.com/maps.google.com/6"></iframe>
+    <div id="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m12!1m3!1d2559.8702!2d14.4180!3d50.087!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1sOld%20Town%20Square%20Prague!5e0!3m2!1sen!2scz!4v1700000000000!5m2!1sen!2scz" allowfullscreen="" loading="lazy"></iframe>
+    </div>
 
     <button id="king-btn" onclick="openChat()">👑 TALK TO THE KING</button>
 
     <div id="chat-overlay">
         <div id="chat-window">
-            <div id="chat-header"><strong>King Charles IV</strong> <span style="float:right;cursor:pointer" onclick="closeChat()">×</span></div>
+            <div id="chat-header">King Charles IV <span style="float:right;cursor:pointer" onclick="closeChat()">×</span></div>
             <div id="chat-history">
-                <div class="msg k-msg">Greetings, young travelers! My word... what strange tunics you wear! And what are those glowing magic glass boxes in your hands? <br><br>I am King Charles. I built this city, but my secrets are hidden well. Are you ready for your first riddle? <br><br>Find the <strong>Stone Bell House</strong> on the map. Tell me, is that bell made of metal or stone?</div>
+                <div class="msg k-msg">Greetings, young scholars! My word... what strange tunics you wear! Are those magic glass boxes in your hands? <br><br>I am the King. I built this city, but my secrets are hidden well. <br><br>First: Find the <strong>Stone Bell House</strong>. Tell me, is the bell there made of metal or stone?</div>
             </div>
             <div id="input-area">
                 <input type="text" id="user-in" placeholder="Reply to the King..." onkeypress="if(event.key==='Enter')send()">
@@ -59,7 +62,7 @@
         function send() {
             const input = document.getElementById('user-in');
             const history = document.getElementById('chat-history');
-            const val = input.value.toLowerCase();
+            const val = input.value.toLowerCase().trim();
             if(!val) return;
 
             history.innerHTML += `<div class="msg u-msg">${input.value}</div>`;
@@ -67,29 +70,29 @@
 
             setTimeout(() => {
                 let r = "";
-                // Helping with "Where" questions
+                // Logic for "Where is it"
                 if (val.includes("where") || val.includes("lost") || val.includes("find")) {
-                    if(step==1) r = "Look at your magic map! The House at the Stone Bell is near the Great Church with the two black towers (Tyn Church). Go there!";
-                    else if(step==2) r = "The Clock is on the side of the Old Town Hall. Look for the crowd of tourists staring up!";
-                    else r = "The Bridge Tower is at the end of the Royal Way, where the big stone bridge begins!";
+                    if(step==1) r = "Look for the Church with the two black towers (Tyn Church). The House at the Stone Bell is right next to it on the corner!";
+                    else if(step==2) r = "Follow the crowd to the Old Town Hall! Look for the giant gold clock with the skeletons.";
+                    else r = "Walk down Karlova street until you see the massive Stone Bridge. The Tower is right there!";
                 }
-                // Riddle Logic
-                else if (step == 1 && (val.includes("stone") || val.includes("rock"))) {
-                    r = "Huzzah! It is stone. I once lived there myself! Now, find the 'Vanity' man at the Astronomical Clock. What is he holding?";
+                // Logic for riddles
+                else if (step == 1 && (val.includes("stone") || val.includes("rock") || val.includes("kamen"))) {
+                    r = "Huzzah! It is stone. I lived there as a boy! Now, go to the Astronomical Clock. Find the man named 'Vanity'. What is he holding?";
                     step = 2;
-                } else if (step == 2 && val.includes("mirror")) {
-                    r = "A mirror! He is very proud. Now, go to the Bridge Tower and find the Kingfisher bird. What is he sitting inside?";
+                } else if (step == 2 && (val.includes("mirror") || val.includes("zrcadlo"))) {
+                    r = "A mirror! He is very proud. Now, find the Bridge Tower. Look for the Kingfisher bird. What is he sitting inside?";
                     step = 3;
-                } else if (step == 3 && (val.includes("wreath") || val.includes("circle"))) {
-                    r = "A wreath! You are a master scholar. My magic number is 1357 9 7 5 3 1. Go and tell your teacher you have the Royal Diploma!";
+                } else if (step == 3 && (val.includes("wreath") || val.includes("circle") || val.includes("venec"))) {
+                    r = "A wreath! You are a master of Prague! My magic number is 1357 9 7 5 3 1. Tell your teacher you have earned the Royal Diploma!";
                     step = 4;
-                } else if (val.includes("sex") || val.includes("butt") || val.includes("stupid")) {
-                    r = "By my beard! That is not how one speaks to a King! Return to the hunt at once!";
+                } else if (val.includes("sex") || val.includes("butt") || val.includes("poop") || val.includes("stupid")) {
+                    r = "By my beard! That is not how a scholar speaks! Focus on the quest!";
                 } else {
-                    r = "That is a curious answer, but it does not solve my riddle! Look closer at the city around you.";
+                    r = "That is a curious answer, but not the one I seek! Look closer at the stone!";
                 }
 
-                history.innerHTML += `<div class="msg k-msg">Karel: ${r}</div>`;
+                history.innerHTML += `<div class="msg k-msg">${r}</div>`;
                 history.scrollTop = history.scrollHeight;
             }, 600);
         }
